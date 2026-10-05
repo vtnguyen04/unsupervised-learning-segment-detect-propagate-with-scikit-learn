@@ -121,11 +121,20 @@ def digits_data(test_size=0.25, random_state=42):
         X, y, test_size=test_size, random_state=random_state, stratify=y
     )
 
-# Step 10 - baseline_50_random (not yet solved)
-# TODO: implement
+# Step 10 - baseline_50_random
+def baseline_50_random(
+    X_train, y_train, X_test, y_test, n_labeled=50, random_state=42
+):
+    clf = LogisticRegression(max_iter=10000, random_state=random_state)
+    clf.fit(X_train[:n_labeled], y_train[:n_labeled])
+    return float(clf.score(X_test, y_test))
 
-# Step 11 - representative_digits (not yet solved)
-# TODO: implement
+# Step 11 - representative_digits
+def representative_digits(X_train, k=50, random_state=42):
+    kmeans = fit_kmeans(X_train, k, random_state=random_state)
+    distances = kmeans.transform(X_train)
+    rep_idx = np.argmin(distances, axis=0)
+    return kmeans, rep_idx.astype(int)
 
 # Step 12 - train_on_representatives (not yet solved)
 # TODO: implement
