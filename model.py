@@ -146,8 +146,50 @@ def train_on_representatives(X_train, y_train, rep_idx, X_test, y_test):
     clf.fit(X_train[rep_idx], y_train[rep_idx])
     return float(clf.score(X_test, y_test))
 
-# Step 13 - propagate_and_train (not yet solved)
-# TODO: implement
+# Step 13 - propagate_and_train
+def propagate_and_train(
+    X_train,
+    y_train,
+    kmeans,
+    rep_idx,
+    X_test,
+    y_test,
+    percentile=20,
+):
+    cluster_labels = kmeans.labels_
+    distances = kmeans.transform(X_train)
+
+    sample_distances = distances[np.arange(len(X_train)), cluster_labels]
+
+    rep_labels = y_train[rep_idx]
+    y_train_propagated = rep_labels[cluster_labels]
+
+    selected_mask = np.zeros(len(X_train), dtype=bool)
+
+    # Filter points within each cluster based on distance percentile
+    for j in range(kmeans.n_clusters):
+        in_cluster = cluster_labels == j
+        cluster_dists = sample_distances[in_cluster]
+        if len(cluster_dists) > 0:
+            cutoff = np.percentile(cluster_dists, percentile)
+            selected_mask[in_cluster] = cluster_dists <= cutoff
+
+    X_train_prop = X_train[selected_mask]
+    y_prop = y_train_propagated[selected_mask]
+    y_true_selected = y_train[selected_mask]
+
+    n_propagated = int(selected_mask.sum())
+    label_accuracy = float(np.mean(y_prop == y_true_selected))
+
+    clf = LogisticRegression(max_iter=10000)
+    clf.fit(X_train_prop, y_prop)
+    test_accuracy = float(clf.score(X_test, y_test))
+
+    return {
+        "n_propagated": n_propagated,
+        "label_accuracy": label_accuracy,
+        "test_accuracy": test_accuracy,
+    }
 
 # Step 14 - synthetic_image (not yet solved)
 # TODO: implement
