@@ -107,8 +107,19 @@ def flag_anomalies(gmm, X, contamination=0.04):
     threshold = np.percentile(densities, 100 * contamination)
     return densities < threshold
 
-# Step 9 - digits_data (not yet solved)
-# TODO: implement
+# Step 9 - digits_data
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+
+
+def digits_data(test_size=0.25, random_state=42):
+    digits = load_digits()
+    X, y = digits.data, digits.target
+    return train_test_split(
+        X, y, test_size=test_size, random_state=random_state, stratify=y
+    )
 
 # Step 10 - baseline_50_random (not yet solved)
 # TODO: implement
