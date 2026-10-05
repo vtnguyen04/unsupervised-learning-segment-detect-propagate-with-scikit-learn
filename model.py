@@ -191,8 +191,25 @@ def propagate_and_train(
         "test_accuracy": test_accuracy,
     }
 
-# Step 14 - synthetic_image (not yet solved)
-# TODO: implement
+# Step 14 - synthetic_image
+def synthetic_image(size=48):
+    img = np.zeros((size, size, 3), dtype=np.float64)
+    mid = size // 2
+
+    g_ramp = np.linspace(0.0, 1.0, mid)
+
+    img[:, :mid, 0] = 1.0
+    img[:, :mid, 1] = g_ramp
+    img[:, :mid, 2] = 0.0
+
+    img[:, mid:, 0] = 0.0
+    img[:, mid:, 1] = g_ramp
+    img[:, mid:, 2] = 1.0
+
+    sq = size // 4
+    img[:sq, :sq, :] = 1.0
+
+    return img
 
 # Step 15 - segment_colors (not yet solved)
 # TODO: implement
