@@ -99,17 +99,13 @@ def bic_curve(X, ks):
     return {k: float(fit_gmm(X, k).bic(X)) for k in ks}
 
 # Step 8 - flag_anomalies
-from sklearn.mixture import GaussianMixture
+import numpy as np
 
 
-def fit_gmm(X, n_components, random_state=42):
-    return GaussianMixture(
-        n_components=n_components, n_init=10, random_state=random_state
-    ).fit(X)
-
-
-def bic_curve(X, ks):
-    return {k: float(fit_gmm(X, k).bic(X)) for k in ks}
+def flag_anomalies(gmm, X, contamination=0.04):
+    densities = gmm.score_samples(X)
+    threshold = np.percentile(densities, 100 * contamination)
+    return densities < threshold
 
 # Step 9 - digits_data (not yet solved)
 # TODO: implement
